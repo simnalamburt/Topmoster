@@ -9,17 +9,19 @@ LPCWSTR ClassName = L"TOPMOSTER";
 
 HWND WindowHandle;
 LPCWSTR WindowTitle = L"Topmoster";
-LONG WindowWidth = 100;
-LONG WindowHeight = 200;
+LONG WindowWidth = 200;
+LONG WindowHeight = 30;
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
-
+HWND Button;
+LPCWSTR ButtonTitle = L"Select Window";
 
 
 
 int WINAPI wWinMain(HINSTANCE InstanceHandle, HINSTANCE, PWSTR, int ShowCommand)
 {
     ::InstanceHandle = InstanceHandle;
+
 
     //// Register a window class for subsequent use in calls to the CreateWindow
     WNDCLASSEX wcex = {};
@@ -40,8 +42,13 @@ int WINAPI wWinMain(HINSTANCE InstanceHandle, HINSTANCE, PWSTR, int ShowCommand)
     RECT emptyRect = { 0, 0, WindowWidth, WindowHeight };
     FALSE_WARNING(AdjustWindowRect(&emptyRect, windowStyle, FALSE));
     // Create the window
-    FALSE_ERROR(WindowHandle = CreateWindow(ClassName, WindowTitle, windowStyle, CW_USEDEFAULT, CW_USEDEFAULT,
-        emptyRect.right - emptyRect.left, emptyRect.bottom - emptyRect.top, nullptr, nullptr, InstanceHandle, nullptr));
+    FALSE_ERROR(WindowHandle = CreateWindow(ClassName, WindowTitle, windowStyle,
+        CW_USEDEFAULT, CW_USEDEFAULT, emptyRect.right - emptyRect.left, emptyRect.bottom - emptyRect.top,
+        nullptr, nullptr, InstanceHandle, nullptr));
+    FALSE_ERROR(Button = CreateWindow(L"BUTTON", ButtonTitle,
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+        0, 0, WindowWidth, WindowHeight,
+        WindowHandle, nullptr, InstanceHandle, nullptr));
 
 
     //// Run
@@ -74,6 +81,9 @@ LRESULT CALLBACK WindowProcedure(HWND WindowHandle, UINT Message, WPARAM wParam,
 {
     switch (Message)
     {
+    case WM_COMMAND:
+        MessageBox(WindowHandle, L"버튼 눌려짐!", L"테스트", MB_OK);
+        return 0;
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
