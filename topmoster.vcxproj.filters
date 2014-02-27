@@ -5,6 +5,9 @@
     <ClCompile Include="pch.cpp">
       <Filter>[pch]</Filter>
     </ClCompile>
+    <ClCompile Include="ErrorReporter.cpp">
+      <Filter>ErrorReporter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -13,10 +16,16 @@
     <ClInclude Include="pch.h">
       <Filter>[pch]</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorReporter.h">
+      <Filter>ErrorReporter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="[pch]">
       <UniqueIdentifier>{3ceaebfe-156d-4fad-971e-9f5ab5b51f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ErrorReporter">
+      <UniqueIdentifier>{c0b1b275-eb7f-42eb-9ef5-6a178428cbbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

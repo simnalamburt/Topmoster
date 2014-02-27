@@ -5,3 +5,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+
+// C++ Çì´õ
+#include <string>
+#include <sstream>
