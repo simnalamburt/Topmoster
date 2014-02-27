@@ -13,8 +13,13 @@ LONG WindowWidth = 200;
 LONG WindowHeight = 30;
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
-HWND Button;
-LPCWSTR ButtonTitle = L"Select Window";
+HWND ButtonHandle;
+LPCWSTR ButtonWaiting = L"저를 누르세요";
+LPCWSTR ButtonSelecting = L"윈도우를 고르세요";
+wchar_t ButtonSelected[32] = L"";
+
+enum class Status { Waiting, Selecting, Selected };
+Status CurrentStatus;
 
 
 
@@ -45,7 +50,7 @@ int WINAPI wWinMain(HINSTANCE InstanceHandle, HINSTANCE, PWSTR, int ShowCommand)
     FALSE_ERROR(WindowHandle = CreateWindow(ClassName, WindowTitle, windowStyle,
         CW_USEDEFAULT, CW_USEDEFAULT, emptyRect.right - emptyRect.left, emptyRect.bottom - emptyRect.top,
         nullptr, nullptr, InstanceHandle, nullptr));
-    FALSE_ERROR(Button = CreateWindow(L"BUTTON", ButtonTitle,
+    FALSE_ERROR(ButtonHandle = CreateWindow(L"BUTTON", ButtonWaiting,
         WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
         0, 0, WindowWidth, WindowHeight,
         WindowHandle, nullptr, InstanceHandle, nullptr));
@@ -82,12 +87,24 @@ LRESULT CALLBACK WindowProcedure(HWND WindowHandle, UINT Message, WPARAM wParam,
     switch (Message)
     {
     case WM_COMMAND:
-        MessageBox(WindowHandle, L"버튼 눌려짐!", L"테스트", MB_OK);
-        return 0;
+        switch (CurrentStatus)
+        {
+        case Status::Waiting:
+            EnableWindow(ButtonHandle, FALSE);
+            SetWindowText(ButtonHandle, ButtonSelecting);
+            CurrentStatus = Status::Selecting;
+            return 0;
+        case Status::Selecting:
+            EnableWindow(ButtonHandle, TRUE);
+            SetWindowText(ButtonHandle, ButtonSelected);
+            CurrentStatus = Status::Selected;
+            return 0;
+        }
+        break;
     case WM_DESTROY:
         PostQuitMessage(0);
         return 0;
-    default:
-        return DefWindowProc(WindowHandle, Message, wParam, lParam);
     }
+
+    return DefWindowProc(WindowHandle, Message, wParam, lParam);
 }
