@@ -98,7 +98,64 @@ LRESULT CALLBACK WindowProcedure(HWND WindowHandle, UINT Message, WPARAM wParam,
             EnableWindow(ButtonHandle, TRUE);
             SetWindowText(ButtonHandle, ButtonSelected);
             CurrentStatus = Status::Selected;
+            InvalidateRect(WindowHandle, nullptr, TRUE);
             return 0;
+        }
+        break;
+    case WM_PAINT:
+        switch (CurrentStatus)
+        {
+        case Status::Selecting:
+            auto border = 3;
+            auto hwnd = WindowHandle;
+
+            //window rectangle (screen coords)
+            RECT rect;
+            GetWindowRect(hwnd, &rect);
+
+            //client rectangle (screen coords)
+            RECT rectc;
+            GetClientRect(hwnd, &rectc);
+            ClientToScreen(hwnd, (POINT *)&rectc.left);
+            ClientToScreen(hwnd, (POINT *)&rectc.right);
+            //MapWindowPoints(hwnd, 0, (POINT *)&rectc, 2);
+
+            int x1 = rect.left, y1 = rect.top;
+            OffsetRect(&rect, -x1, -y1);
+            OffsetRect(&rectc, -x1, -y1);
+
+            if (rect.bottom - border * 2 < 0)
+                border = 1;
+
+            if (rect.right - border * 2 < 0)
+                border = 1;
+
+            auto hdc = GetWindowDC(hwnd);
+            if (hdc == 0) break;
+
+            //top edge
+            //border = rectc.top-rect.top;
+            RECT rect2 = { 0, 0, rect.right, border };
+            InvertRect(hdc, &rect2);
+
+            //left edge
+            //border = rectc.left-rect.left;
+            SetRect(&rect2, 0, border, border, rect.bottom);
+            InvertRect(hdc, &rect2);
+
+            //right edge
+            //border = rect.right-rectc.right;
+            SetRect(&rect2, border, rect.bottom - border, rect.right, rect.bottom);
+            InvertRect(hdc, &rect2);
+
+            //bottom edge
+            //border = rect.bottom-rectc.bottom;
+            SetRect(&rect2, rect.right - border, border, rect.right, rect.bottom - border);
+            InvertRect(hdc, &rect2);
+
+
+            ReleaseDC(hwnd, hdc);
+            break;
         }
         break;
     case WM_DESTROY:
